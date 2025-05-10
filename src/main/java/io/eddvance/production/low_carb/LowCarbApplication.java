@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb;
+package io.eddvance.production.low_carb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
