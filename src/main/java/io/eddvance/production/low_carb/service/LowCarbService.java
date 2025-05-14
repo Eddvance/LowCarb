@@ -17,5 +17,5 @@ public class LowCarbService {
         return finalRatePrice.toString();
     }
 
-    //calcul 19% energie carbonnee et 81% energie verte, energie verte provient de lowarbpower
+    //calcul 19% energie carbonnee et 81% energie verte, energie verte provient de lowcarbpower
 }
