@@ -1,21 +1,19 @@
 package io.eddvance.production.low_carb.service;
 
+import io.eddvance.production.low_carb.client.coalfired_client.CoalFiredClient;
+import io.eddvance.production.low_carb.client.low_carb_power_client.LowCarbPowerClient;
+import org.springframework.stereotype.Service;
+
+@Service
 public class LowCarbService {
 
-    //calcul energie carbonnee
-    public String getFinalRate() {
-        Double bloc256 = 256.00;
-        Double bloc256Price = 10.00;
-        Double finalRatePrice;
-        Double rating;
-        String provisoire = "";
-        Double provisoireDouble;
-        provisoireDouble = Double.parseDouble(provisoire);
-        rating = provisoireDouble / bloc256;
-        finalRatePrice = rating * bloc256Price;
+    private LowCarbPowerClient lowCarbPowerClient;
+    private CoalFiredClient coalFiredClient;
 
-        return finalRatePrice.toString();
+    public LowCarbService(LowCarbPowerClient lowCarbPowerClient, CoalFiredClient coalFiredClient) {
+        this.lowCarbPowerClient = lowCarbPowerClient;
+        this.coalFiredClient = coalFiredClient;
     }
 
-    //calcul 19% energie carbonnee et 81% energie verte, energie verte provient de lowcarbpower
+
 }

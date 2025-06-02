@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name="coalfired")
 public interface CoalFiredClient {
     @GetMapping("/coalfired")
-    String getGreenEnergyRate();//
+    String getCarbonEnergyRate();//
 }
