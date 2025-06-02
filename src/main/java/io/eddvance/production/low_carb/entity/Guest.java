@@ -1,4 +1,4 @@
-package io.eddvance.production.low_carb.entity;
+/*package io.eddvance.production.low_carb.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -42,3 +42,5 @@ public class Guest {
         return id;
     }
 }
+
+ */

@@ -12,22 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class LowCarbController {
 
+    private final LowCarbService lowCarbService;
+
     public LowCarbController(LowCarbService lowCarbService) {
         this.lowCarbService = lowCarbService;
     }
-
-    private final LowCarbService lowCarbService;
 
     @GetMapping("/lowcarb")
     public ResponseEntity<UserResponseDto> getConsumptionEstimate(
             @RequestParam("email") String email,
             @RequestParam("ratingRequest") Double ratingRequest) {
 
-        // return ResponseEntity.ok(lowCarbService.??(email, ratingRequest));
+        UserResponseDto response = lowCarbService.rating(email, ratingRequest);
+        return ResponseEntity.ok(response);
     }
 
-    //@PostMapping("/lowcarb/save")
-    //public ResponseEntity<ConsumptionResponse> saveConsumption(@RequestBody ConsumptionRequest request) {
-    //    return ResponseEntity.ok(lowCarbService.saveConsumptionData(request));
-    // }
 }
