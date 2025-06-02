@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class LowCarbController {
 
-    private final LowCarbService lowCarbService;
+  //  private final LowCarbService lowCarbService;
 
-    public LowCarbController(LowCarbService lowCarbService) {
-        this.lowCarbService = lowCarbService;
-    }
+   // public LowCarbController(LowCarbService lowCarbService) {
+    //    this.lowCarbService = lowCarbService;
+  //  }
 
-    @GetMapping("/lowcarb")
+   /* @GetMapping("/lowcarb")
     public ResponseEntity<UserResponseDto> getConsumptionEstimate(
             @RequestParam("email") String email,
             @RequestParam("ratingRequest") Double ratingRequest) {
@@ -26,5 +26,5 @@ public class LowCarbController {
         UserResponseDto response = lowCarbService.rating(email, ratingRequest);
         return ResponseEntity.ok(response);
     }
-
+*/
 }
