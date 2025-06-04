@@ -2,11 +2,11 @@ package io.eddvance.production.low_carb.controller.api;
 
 import io.eddvance.production.low_carb.dto.user_response_dto.UserResponseDto;
 import io.eddvance.production.low_carb.service.low_carb_service.LowCarbService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -19,11 +19,10 @@ public class LowCarbController {
     }
 
     @GetMapping("/low-carb")
-    public ResponseEntity<UserResponseDto> getConsumptionEstimate(
+    public Mono<UserResponseDto> getConsumptionEstimate(
             @RequestParam("email") String email,
             @RequestParam("ratingRequest") Double ratingRequest) {
 
-        UserResponseDto response = lowCarbService.calculateConsumption(email, ratingRequest);
-        return ResponseEntity.ok(response);
+        return lowCarbService.calculateConsumption(email, ratingRequest);
     }
 }
