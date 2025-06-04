@@ -1,11 +1,13 @@
 package io.eddvance.production.low_carb.service.get_rate_service;
 
 import io.eddvance.production.low_carb.exception.GetRateException;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+@Service
 public class GetRateService {
 
     private final WebClient coalFiredWebClient;
