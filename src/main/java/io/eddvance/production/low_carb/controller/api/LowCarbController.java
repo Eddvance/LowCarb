@@ -1,7 +1,7 @@
 package io.eddvance.production.low_carb.controller.api;
 
 import io.eddvance.production.low_carb.dto.user_response_dto.UserResponseDto;
-import io.eddvance.production.low_carb.service.LowCarbService;
+import io.eddvance.production.low_carb.service.low_carb_service.LowCarbService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,19 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class LowCarbController {
 
-  //  private final LowCarbService lowCarbService;
+    private final LowCarbService lowCarbService;
 
-   // public LowCarbController(LowCarbService lowCarbService) {
-    //    this.lowCarbService = lowCarbService;
-  //  }
+    public LowCarbController(LowCarbService lowCarbService) {
+        this.lowCarbService = lowCarbService;
+    }
 
-   /* @GetMapping("/lowcarb")
+    @GetMapping("/low-carb")
     public ResponseEntity<UserResponseDto> getConsumptionEstimate(
             @RequestParam("email") String email,
             @RequestParam("ratingRequest") Double ratingRequest) {
 
-        UserResponseDto response = lowCarbService.rating(email, ratingRequest);
+        UserResponseDto response = lowCarbService.calculateConsumption(email, ratingRequest);
         return ResponseEntity.ok(response);
     }
-*/
 }
