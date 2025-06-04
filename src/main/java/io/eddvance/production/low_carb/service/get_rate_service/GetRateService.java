@@ -21,7 +21,7 @@ public class GetRateService {
     public Mono<Double> getCarbonRate() {
         return coalFiredWebClient
                 .get()
-                .uri("/coal-fired")
+                .uri("/productOfferingPrice/block-256-offer-price")
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(rateString -> {
