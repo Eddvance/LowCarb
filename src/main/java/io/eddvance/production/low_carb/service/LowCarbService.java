@@ -1,7 +1,6 @@
-package io.eddvance.production.low_carb.service.low_carb_service;
+package io.eddvance.production.low_carb.service;
 
 import io.eddvance.production.low_carb.dto.user_response_dto.UserResponseDto;
-import io.eddvance.production.low_carb.service.get_rate_service.GetRateService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

@@ -1,5 +1,6 @@
-package io.eddvance.production.low_carb.service.get_rate_service;
+package io.eddvance.production.low_carb.service;
 
+import io.eddvance.production.low_carb.coal_fired_dto.ProductOfferingPriceResponse;
 import io.eddvance.production.low_carb.exception.GetRateException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,14 +24,16 @@ public class GetRateService {
                 .get()
                 .uri("/productOfferingPrice/block-256-offer-price")
                 .retrieve()
-                .bodyToMono(String.class)
-                .map(rateString -> {
+                .bodyToMono(ProductOfferingPriceResponse.class)
+                .<Double>handle((response, sink) -> {
                     try {
-                        Double rate = Double.parseDouble(rateString);
-                        System.out.println("✓ Tarif carbone récupéré : " + rate + " €/kWh");
-                        return rate;
+                        Double rate = response.getPrice().getValue();
+                        Double kwh = response.getUnitOfMeasure().getAmount();
+                        double finalePrice = rate / kwh;
+
+                        sink.next(finalePrice);
                     } catch (NumberFormatException e) {
-                        throw new GetRateException("Tarif carbone invalide: " + rateString, e);
+                        sink.error(new GetRateException("Erreur calcul tarif carbone: " + e.getMessage(), e));//throw
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
