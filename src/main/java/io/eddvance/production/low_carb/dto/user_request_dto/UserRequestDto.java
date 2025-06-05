@@ -5,6 +5,8 @@ public class UserRequestDto {
     private String email;
     private String ratingRequest;
 
+    public UserRequestDto() {}
+
     public String getEmail() {
         return email;
     }

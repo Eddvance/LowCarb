@@ -1,11 +1,9 @@
-package io.eddvance.production.low_carb.coal_fired;
+package io.eddvance.production.low_carb.coal_fired_dto;
 
 public class Price {
     String unit;
     Double value;
 
-    public Price(String unit, Double value) {
-    }
     public Price() {}
 
     public String getUnit() {

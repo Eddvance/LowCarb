@@ -6,6 +6,8 @@ public class UserResponseDto {
     private String consummation;
     private String rate;
 
+    public UserResponseDto() {}
+
     public String getEmail() {
         return email;
     }

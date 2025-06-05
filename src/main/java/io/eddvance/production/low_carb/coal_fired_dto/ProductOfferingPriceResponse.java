@@ -1,4 +1,4 @@
-package io.eddvance.production.low_carb.coal_fired;
+package io.eddvance.production.low_carb.coal_fired_dto;
 
 public class ProductOfferingPriceResponse {
 
@@ -7,12 +7,6 @@ public class ProductOfferingPriceResponse {
     private UnitOfMeasure unitOfMeasure;
 
     public ProductOfferingPriceResponse() {
-    }
-
-    public ProductOfferingPriceResponse(String id, Price price, UnitOfMeasure unitOfMeasure) {
-        this.id = id;
-        this.price = price;
-        this.unitOfMeasure = unitOfMeasure;
     }
 
     public String getId() {
