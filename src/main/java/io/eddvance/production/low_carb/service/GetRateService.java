@@ -32,7 +32,7 @@ public class GetRateService {
                         double finalePrice = rate / kwh;
 
                         sink.next(finalePrice);
-                    } catch (NumberFormatException e) {
+                    } catch (Exception e) {
                         sink.error(new GetRateException("Erreur calcul tarif carbone: " + e.getMessage(), e));//throw
                     }
                 })

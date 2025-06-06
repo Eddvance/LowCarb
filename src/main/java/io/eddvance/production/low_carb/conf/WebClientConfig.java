@@ -24,7 +24,7 @@ public class WebClientConfig {
                                 .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
-                .baseUrl("http://localhost:3000/platform/productCatalogManagement/v4")
+                .baseUrl("http://coalfired:3000/platform/productCatalogManagement/v4")
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }

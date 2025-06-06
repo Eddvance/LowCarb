@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http:/localhost:80")
 public class LowCarbController {
 
     private final LowCarbService lowCarbService;
