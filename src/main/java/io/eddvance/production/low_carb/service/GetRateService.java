@@ -52,13 +52,17 @@ public class GetRateService {
                 .uri("/low-carb-power/rate")
                 .retrieve()
                 .bodyToMono(String.class)
-                .map(rateString -> {
+                .flatMap(rateString -> {
+                    if (rateString == null || rateString.trim().isEmpty()) {
+                        return Mono.error(new GetRateException("Réponse vide ou nulle pour le tarif vert."));
+                    }
+
                     try {
                         Double rate = Double.parseDouble(rateString);
                         System.out.println("✓ Tarif vert récupéré : " + rateString + " €/kWh");
-                        return rate;
+                        return Mono.just(rate);
                     } catch (NumberFormatException e) {
-                        throw new GetRateException("Tarif vert invalide: " + rateString, e);
+                        return Mono.error(new GetRateException("Tarif vert invalide: " + rateString, e));
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
