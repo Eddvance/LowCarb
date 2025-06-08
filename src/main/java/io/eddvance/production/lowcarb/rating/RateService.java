@@ -1,7 +1,6 @@
-package io.eddvance.production.low_carb.service;
+package io.eddvance.production.lowcarb.rating;
 
-import io.eddvance.production.low_carb.coal_fired_dto.ProductOfferingPriceResponse;
-import io.eddvance.production.low_carb.exception.GetRateException;
+import io.eddvance.production.lowcarb.rating.dto.ProductOfferingPriceResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -9,12 +8,12 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 @Service
-public class GetRateService {
+public class RateService {
 
     private final WebClient coalFiredWebClient;
     private final WebClient lowCarbPowerWebClient;
 
-    public GetRateService(WebClient coalFiredWebClient, WebClient lowCarbPowerWebClient) {
+    public RateService(WebClient coalFiredWebClient, WebClient lowCarbPowerWebClient) {
         this.coalFiredWebClient = coalFiredWebClient;
         this.lowCarbPowerWebClient = lowCarbPowerWebClient;
     }
@@ -33,14 +32,14 @@ public class GetRateService {
 
                         sink.next(finalePrice);
                     } catch (Exception e) {
-                        sink.error(new GetRateException("Erreur calcul tarif carbone: " + e.getMessage(), e));//throw
+                        sink.error(new RateException("Erreur calcul tarif carbone: " + e.getMessage(), e));//throw
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
-                        new GetRateException("Service CoalFired indisponible: " + ex.getMessage(), ex))
+                        new RateException("Service CoalFired indisponible: " + ex.getMessage(), ex))
                 .onErrorMap(Exception.class, ex -> {
-                    if (!(ex instanceof GetRateException)) {
-                        return new GetRateException("Erreur récupération tarif carbone", ex);
+                    if (!(ex instanceof RateException)) {
+                        return new RateException("Erreur récupération tarif carbone", ex);
                     }
                     return ex;
                 });
@@ -54,7 +53,7 @@ public class GetRateService {
                 .bodyToMono(String.class)
                 .flatMap(rateString -> {
                     if (rateString == null || rateString.trim().isEmpty()) {
-                        return Mono.error(new GetRateException("Réponse vide ou nulle pour le tarif vert."));
+                        return Mono.error(new RateException("Réponse vide ou nulle pour le tarif vert."));
                     }
 
                     try {
@@ -62,14 +61,14 @@ public class GetRateService {
                         System.out.println("✓ Tarif vert récupéré : " + rateString + " €/kWh");
                         return Mono.just(rate);
                     } catch (NumberFormatException e) {
-                        return Mono.error(new GetRateException("Tarif vert invalide: " + rateString, e));
+                        return Mono.error(new RateException("Tarif vert invalide: " + rateString, e));
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
-                        new GetRateException("Service LowCarbPower indisponible: " + ex.getMessage(), ex))
+                        new RateException("Service LowCarbPower indisponible: " + ex.getMessage(), ex))
                 .onErrorMap(Exception.class, ex -> {
-                    if (!(ex instanceof GetRateException)) {
-                        return new GetRateException("Erreur récupération tarif vert", ex);
+                    if (!(ex instanceof RateException)) {
+                        return new RateException("Erreur récupération tarif vert", ex);
                     }
                     return ex;
                 });

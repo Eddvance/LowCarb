@@ -1,4 +1,4 @@
-package io.eddvance.production.low_carb.dto.user_request_dto;
+package io.eddvance.production.lowcarb.consumption;
 
 public class UserRequestDto {
 

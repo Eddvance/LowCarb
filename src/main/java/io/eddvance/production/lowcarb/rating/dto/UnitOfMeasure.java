@@ -1,4 +1,4 @@
-package io.eddvance.production.low_carb.coal_fired_dto;
+package io.eddvance.production.lowcarb.rating.dto;
 
 public class UnitOfMeasure {
     Double amount;
