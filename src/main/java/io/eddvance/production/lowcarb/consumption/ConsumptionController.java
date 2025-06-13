@@ -9,7 +9,6 @@ import reactor.core.publisher.Mono;
 @RestController
 @CrossOrigin(origins = "http:/localhost:80")
 public class ConsumptionController {
-
     private final ConsumptionService consumptionService;
 
     public ConsumptionController(ConsumptionService consumptionService) {
@@ -24,36 +23,4 @@ public class ConsumptionController {
         return consumptionService.calculateConsumption(email, ratingRequest);
     }
 
-    public static class UserResponseDto {
-
-        private String email;
-        private String consummation;
-        private String rate;
-
-        public UserResponseDto() {}
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getConsummation() {
-            return consummation;
-        }
-
-        public void setConsummation(String consummation) {
-            this.consummation = consummation;
-        }
-
-        public String getRate() {
-            return rate;
-        }
-
-        public void setRate(String rate) {
-            this.rate = rate;
-        }
-    }
 }
