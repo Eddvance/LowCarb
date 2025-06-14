@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebClientConfig {
+
     @Bean
     public WebClient coalFiredWebClient() {
         HttpClient httpClient = HttpClient.create()
@@ -30,7 +31,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient lowCarbPowerWebClient() {
+    public WebClient serviceCronWebClient() {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .responseTimeout(Duration.ofMillis(5000))
@@ -39,8 +40,9 @@ public class WebClientConfig {
                                 .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl("http://localhost:8082")
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
+
 }

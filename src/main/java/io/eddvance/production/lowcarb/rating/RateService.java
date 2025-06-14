@@ -11,11 +11,11 @@ import reactor.util.function.Tuple2;
 public class RateService {
 
     private final WebClient coalFiredWebClient;
-    private final WebClient lowCarbPowerWebClient;
+    private final WebClient serviceCronWebClient;
 
-    public RateService(WebClient coalFiredWebClient, WebClient lowCarbPowerWebClient) {
+    public RateService(WebClient coalFiredWebClient, WebClient serviceCronWebClient) {
         this.coalFiredWebClient = coalFiredWebClient;
-        this.lowCarbPowerWebClient = lowCarbPowerWebClient;
+        this.serviceCronWebClient = serviceCronWebClient;
     }
 
     public Mono<Double> getCarbonRate() {
@@ -46,9 +46,9 @@ public class RateService {
     }
 
     public Mono<Double> getGreenRate() {
-        return lowCarbPowerWebClient
+        return serviceCronWebClient
                 .get()
-                .uri("/low-carb-power/rate")
+                .uri("/api/rates/last-rate")
                 .retrieve()
                 .bodyToMono(String.class)
                 .flatMap(rateString -> {

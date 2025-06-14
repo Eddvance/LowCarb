@@ -30,6 +30,7 @@ public class UserResponseDto {
     }
 
     public void setConsummation(String format) {
+        this.consummation = format;
     }
 
     public String getRate() {
@@ -37,5 +38,6 @@ public class UserResponseDto {
     }
 
     public void setRate(String format) {
+        this.rate = format;
     }
 }
