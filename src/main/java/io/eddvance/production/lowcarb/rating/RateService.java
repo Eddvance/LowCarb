@@ -1,5 +1,6 @@
 package io.eddvance.production.lowcarb.rating;
 
+import io.eddvance.production.lowcarb.rating.dto.GreenRateResponse;
 import io.eddvance.production.lowcarb.rating.dto.ProductOfferingPriceResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -50,22 +51,22 @@ public class RateService {
                 .get()
                 .uri("/api/rates/last-rate")
                 .retrieve()
-                .bodyToMono(String.class)
-                .flatMap(rateString -> {
-                    if (rateString == null || rateString.trim().isEmpty()) {
+                .bodyToMono(GreenRateResponse.class)
+                .flatMap(response -> {
+                    if (response == null || response.getRate() == null) {
                         return Mono.error(new RateException("Réponse vide ou nulle pour le tarif vert."));
                     }
 
                     try {
-                        Double rate = Double.parseDouble(rateString);
-                        System.out.println("✓ Tarif vert récupéré : " + rateString + " €/kWh");
+                        Double rate = response.getRate();
+                        System.out.println("✓ Tarif vert récupéré : " + rate + " €/kWh (à " + response.getRateTime() + ")");
                         return Mono.just(rate);
                     } catch (NumberFormatException e) {
-                        return Mono.error(new RateException("Tarif vert invalide: " + rateString, e));
+                        return Mono.error(new RateException("Tarif vert invalide ", e));
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
-                        new RateException("Service LowCarbPower indisponible: " + ex.getMessage(), ex))
+                        new RateException("Service tarif vert indisponible: " + ex.getMessage(), ex))
                 .onErrorMap(Exception.class, ex -> {
                     if (!(ex instanceof RateException)) {
                         return new RateException("Erreur récupération tarif vert", ex);
