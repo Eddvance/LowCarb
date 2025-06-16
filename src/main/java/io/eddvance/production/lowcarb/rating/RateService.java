@@ -8,6 +8,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @Service
 public class RateService {
 
@@ -58,15 +61,26 @@ public class RateService {
                     }
 
                     try {
+                        LocalDateTime rateTime = LocalDateTime.parse(response.getRateTime());
+                        LocalDateTime now = LocalDateTime.now();
+                        long minutesOld = Duration.between(rateTime, now).toMinutes();
+
+                        if (minutesOld > 60) {
+                            return Mono.error(new RateException(
+                                    "Tarif vert trop ancien: " + minutesOld + " minutes (max: 60)"
+                            ));
+                        }
+
                         Double rate = response.getRate();
-                        System.out.println("✓ Tarif vert récupéré : " + rate + " €/kWh (à " + response.getRateTime() + ")");
+                        System.out.println("✓ Tarif vert valide : " + rate + " €/kWh (temps: " + minutesOld + " min)");
                         return Mono.just(rate);
-                    } catch (NumberFormatException e) {
-                        return Mono.error(new RateException("Tarif vert invalide ", e));
+
+                    } catch (Exception e) {
+                        return Mono.error(new RateException("Erreur validation tarif vert: " + e.getMessage(), e));
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
-                        new RateException("Service tarif vert indisponible: " + ex.getMessage(), ex))
+                        new RateException("Service LowCarbPower indisponible: " + ex.getMessage(), ex))
                 .onErrorMap(Exception.class, ex -> {
                     if (!(ex instanceof RateException)) {
                         return new RateException("Erreur récupération tarif vert", ex);
@@ -74,7 +88,6 @@ public class RateService {
                     return ex;
                 });
     }
-
     public Mono<Tuple2<Double, Double>> getAllRates() {
         return Mono.zip(
                 getCarbonRate(),
