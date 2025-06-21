@@ -1,6 +1,5 @@
 package io.eddvance.production.lowcarb.consumption;
 
-import io.eddvance.production.lowcarb.consumption.UserResponseDto;
 import io.eddvance.production.lowcarb.rating.RateService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

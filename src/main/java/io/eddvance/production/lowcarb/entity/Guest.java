@@ -3,7 +3,7 @@
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
+@Table
 public class Guest {
 
     @Id
