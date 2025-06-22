@@ -1,6 +1,6 @@
 package io.eddvance.production.lowcarb.rating;
 
-import io.eddvance.production.lowcarb.rating.dto.GreenRateResponse;
+import io.eddvance.production.lowcarb.cronservice.rate.RateHistoryService;
 import io.eddvance.production.lowcarb.rating.dto.ProductOfferingPriceResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 public class RateService {
 
     private final WebClient coalFiredWebClient;
-    private final WebClient serviceCronWebClient;
+    private final RateHistoryService rateHistoryService;
 
-    public RateService(WebClient coalFiredWebClient, WebClient serviceCronWebClient) {
+    public RateService(WebClient coalFiredWebClient, RateHistoryService rateHistoryService) {
         this.coalFiredWebClient = coalFiredWebClient;
-        this.serviceCronWebClient = serviceCronWebClient;
+        this.rateHistoryService = rateHistoryService;
     }
 
     public Mono<Double> getCarbonRate() {
@@ -36,7 +36,7 @@ public class RateService {
 
                         sink.next(finalePrice);
                     } catch (Exception e) {
-                        sink.error(new RateException("Erreur calcul tarif carbone: " + e.getMessage(), e));//throw
+                        sink.error(new RateException("Erreur calcul tarif carbone: " + e.getMessage(), e));
                     }
                 })
                 .onErrorMap(WebClientResponseException.class, ex ->
@@ -50,18 +50,14 @@ public class RateService {
     }
 
     public Mono<Double> getGreenRate() {
-        return serviceCronWebClient
-                .get()
-                .uri("/api/rates/last-rate")
-                .retrieve()
-                .bodyToMono(GreenRateResponse.class)
-                .flatMap(response -> {
-                    if (response == null || response.getRate() == null) {
+        return rateHistoryService.getLatestRate()
+                .flatMap(record -> {
+                    if (record == null || record.getRate() == null) {
                         return Mono.error(new RateException("Réponse vide ou nulle pour le tarif vert."));
                     }
 
                     try {
-                        LocalDateTime rateTime = LocalDateTime.parse(response.getRateTime());
+                        LocalDateTime rateTime = record.getRateTime();
                         LocalDateTime now = LocalDateTime.now();
                         long minutesOld = Duration.between(rateTime, now).toMinutes();
 
@@ -71,7 +67,7 @@ public class RateService {
                             ));
                         }
 
-                        Double rate = response.getRate();
+                        Double rate = record.getRate();
                         System.out.println("✓ Tarif vert valide : " + rate + " €/kWh (temps: " + minutesOld + " min)");
                         return Mono.just(rate);
 
@@ -88,6 +84,7 @@ public class RateService {
                     return ex;
                 });
     }
+
     public Mono<Tuple2<Double, Double>> getAllRates() {
         return Mono.zip(
                 getCarbonRate(),

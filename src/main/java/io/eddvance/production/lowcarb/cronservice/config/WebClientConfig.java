@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.conf;
+package io.eddvance.production.lowcarb.cronservice.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -16,22 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class WebClientConfig {
 
     @Bean
-    public WebClient coalFiredWebClient() {
-        HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                .responseTimeout(Duration.ofMillis(5000))
-                .doOnConnected(conn ->
-                        conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
-
-        return WebClient.builder()
-                .baseUrl("http://localhost:3000/platform/productCatalogManagement/v4")
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .build();
-    }
-
-    @Bean
-    public WebClient serviceCronWebClient() {
+    public WebClient lowCarbPowerWebClient() {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .responseTimeout(Duration.ofMillis(5000))
@@ -44,5 +29,4 @@ public class WebClientConfig {
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
-
 }
