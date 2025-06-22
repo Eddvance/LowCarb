@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.cronservice.rate;
+package io.eddvance.production.lowcarb.ratecollector.model;
 
 
 import org.springframework.data.annotation.Id;

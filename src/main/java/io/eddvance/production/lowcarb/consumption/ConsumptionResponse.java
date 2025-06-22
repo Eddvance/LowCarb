@@ -1,13 +1,13 @@
 package io.eddvance.production.lowcarb.consumption;
 
-public class UserResponseDto {
+public class ConsumptionResponse {
 
     private String email;
     private String ratingRequest;
     private String consummation;
     private String rate;
 
-    public UserResponseDto() {}
+    public ConsumptionResponse() {}
 
     public String getEmail() {
         return email;

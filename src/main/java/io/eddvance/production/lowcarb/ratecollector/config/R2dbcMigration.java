@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.cronservice.migration;
+package io.eddvance.production.lowcarb.ratecollector.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

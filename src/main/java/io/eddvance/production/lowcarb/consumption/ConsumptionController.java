@@ -16,7 +16,7 @@ public class ConsumptionController {
     }
 
     @GetMapping("/low-carb")
-    public Mono<UserResponseDto> getConsumptionEstimate(
+    public Mono<ConsumptionResponse> getConsumptionEstimate(
             @RequestParam("email") String email,
             @RequestParam("ratingRequest") Double ratingRequest) {
 

@@ -1,5 +1,6 @@
-package io.eddvance.production.lowcarb.cronservice.rate;
+package io.eddvance.production.lowcarb.ratecollector.scheduler;
 
+import io.eddvance.production.lowcarb.ratecollector.service.RateHistoryService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package io.eddvance.production.lowcarb.consumption;
 
-import io.eddvance.production.lowcarb.rating.RateService;
+import io.eddvance.production.lowcarb.pricing.service.RateService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +16,7 @@ public class ConsumptionService {
     private static final double CARBON_PART = 0.19;
     private static final double GREEN_PART = 0.81;
 
-    public Mono<UserResponseDto> calculateConsumption(String email, Double consumption) {
+    public Mono<ConsumptionResponse> calculateConsumption(String email, Double consumption) {
         return rateService.getAllRates()
                 .map(rates -> {
                     Double carbonRate = rates.getT1();
@@ -25,7 +25,7 @@ public class ConsumptionService {
                     double greenConsumption = GREEN_PART * consumption;
                     double finalCost = (carbonConsumption * carbonRate) + (greenConsumption * greenRate);
 
-                    UserResponseDto response = new UserResponseDto();
+                    ConsumptionResponse response = new ConsumptionResponse();
                     response.setEmail(email);
                     response.setConsummation(String.format("%.2f kWh (%.2f kWh carbone @ %.2f€/kWh, %.2f kWh vert @ %.2f€/kWh)", consumption, carbonConsumption, carbonRate, greenConsumption, greenRate));
                     response.setRate(String.format("%.2f €", finalCost));

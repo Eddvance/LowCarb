@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.rating.dto;
+package io.eddvance.production.lowcarb.pricing.dto;
 
 public class Price {
     String unit;

@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.conf;
+package io.eddvance.production.lowcarb.ratecollector.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
