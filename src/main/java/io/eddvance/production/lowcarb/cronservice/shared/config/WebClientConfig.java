@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.cronservice.config;
+/*package io.eddvance.production.lowcarb.cronservice.shared.config;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -30,3 +30,5 @@ public class WebClientConfig {
                 .build();
     }
 }
+
+ */

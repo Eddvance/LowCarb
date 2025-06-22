@@ -18,18 +18,26 @@ public class R2dbcMigration {
 
 
     public Mono<Void> migrate() {
-        log.info("Création des tables...");
+        log.info("Début de la migration...");
 
-        String sql = """
-                CREATE TABLE IF NOT EXISTS rate_history (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    rate DECIMAL(10,4) NOT NULL,
-                    rate_time TIMESTAMP NOT NULL
-                )
-                """;
+        return databaseClient.sql("SELECT 1")
+                .fetch().one()
+                .doOnNext(result -> log.info("Test connexion OK: {}", result))
+                .then(Mono.defer(() -> {
+                    log.info("Exécution du CREATE TABLE...");
+                    String sql = """
+                    
+                            CREATE TABLE IF NOT EXISTS rate_history (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        rate DECIMAL(10,4) NOT NULL,
+                        rate_time TIMESTAMP NOT NULL
+                    )
+                    """;
 
-        return databaseClient.sql(sql)
-                .then()
-                .doOnSuccess(v -> log.info("✅ Table créée"));
+                    return databaseClient.sql(sql)
+                            .then()
+                            .doOnSuccess(v -> log.info("✅ Table créée avec succès"))
+                            .doOnError(e -> log.error("❌ Erreur SQL: ", e));
+                }));
     }
 }

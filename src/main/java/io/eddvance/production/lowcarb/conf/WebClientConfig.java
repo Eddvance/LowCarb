@@ -31,7 +31,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient serviceCronWebClient() {
+    public WebClient lowCarbPowerWebClient() {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .responseTimeout(Duration.ofMillis(5000))
@@ -44,5 +44,4 @@ public class WebClientConfig {
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
-
 }

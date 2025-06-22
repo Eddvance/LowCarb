@@ -1,4 +1,4 @@
-package io.eddvance.production.lowcarb.cronservice.config;
+package io.eddvance.production.lowcarb.cronservice.shared.config;
 
 import io.eddvance.production.lowcarb.cronservice.migration.R2dbcMigration;
 import org.springframework.boot.ApplicationRunner;
