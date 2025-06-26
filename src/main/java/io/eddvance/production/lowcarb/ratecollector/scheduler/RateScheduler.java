@@ -13,7 +13,7 @@ public class RateScheduler {
         this.rateHistoryService = rateHistoryService;
     }
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "${scheduler.rate.cron}")
     public void collectHourlyRate() {
         rateHistoryService.saveCurrentRate().subscribe(
                 rate -> System.out.println("✅ Tarif: " + rate.getRate()),
