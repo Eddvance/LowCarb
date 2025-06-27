@@ -8,9 +8,11 @@ import reactor.core.publisher.Mono;
 public class ConsumptionService {
 
     private final RateService rateService;
+    private final ConsumptionHistoryRepository consumptionHistoryRepository;
 
-    public ConsumptionService(RateService rateService) {
+    public ConsumptionService(RateService rateService, ConsumptionHistoryRepository consumptionHistoryRepository) {
         this.rateService = rateService;
+        this.consumptionHistoryRepository = consumptionHistoryRepository;
     }
 
     private static final double CARBON_PART = 0.19;
@@ -18,18 +20,25 @@ public class ConsumptionService {
 
     public Mono<ConsumptionResponse> calculateConsumption(String email, Double consumption) {
         return rateService.getAllRates()
-                .map(rates -> {
+                .flatMap(rates -> {
                     Double carbonRate = rates.getT1();
                     Double greenRate = rates.getT2();
-                    double carbonConsumption = CARBON_PART * consumption;
-                    double greenConsumption = GREEN_PART * consumption;
-                    double finalCost = (carbonConsumption * carbonRate) + (greenConsumption * greenRate);
+                    Double carbonConsumption = CARBON_PART * consumption;
+                    Double greenConsumption = GREEN_PART * consumption;
+                    Double finalCost = (carbonConsumption * carbonRate) + (greenConsumption * greenRate);
 
-                    ConsumptionResponse response = new ConsumptionResponse();
-                    response.setEmail(email);
-                    response.setConsummation(String.format("%.2f kWh (%.2f kWh carbone @ %.2f€/kWh, %.2f kWh vert @ %.2f€/kWh)", consumption, carbonConsumption, carbonRate, greenConsumption, greenRate));
-                    response.setRate(String.format("%.2f €", finalCost));
-                    return response;
+
+                    ConsumptionHistory history = new ConsumptionHistory(email, consumption, carbonRate, greenRate, finalCost);
+
+                    return consumptionHistoryRepository.save(history)
+                            .map(saved -> {ConsumptionResponse response = new ConsumptionResponse();
+                                response.setEmail(email);
+                                response.setRatingRequest(String.valueOf(consumption));
+                                response.setConsummation(String.format("%.2f kWh (%.2f kWh carbone @ %.2f€/kWh, %.2f kWh vert @ %.2f€/kWh)",
+                                        consumption, carbonConsumption, carbonRate, greenConsumption, greenRate));
+                                response.setRate(String.format("%.2f €", finalCost));
+                                return response;
+                            });
                 });
     }
 }
