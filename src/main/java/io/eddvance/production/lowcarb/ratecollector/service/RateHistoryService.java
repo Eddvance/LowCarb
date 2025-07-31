@@ -13,7 +13,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
-public class RateHistoryService {
+public class
+RateHistoryService {
 
     private final RateHistoryRepository rateHistoryRepository;
     private final WebClient lowCarbPowerWebClient;

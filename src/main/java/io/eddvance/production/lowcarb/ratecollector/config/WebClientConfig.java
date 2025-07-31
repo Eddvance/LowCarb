@@ -1,8 +1,10 @@
 package io.eddvance.production.lowcarb.ratecollector.config;
 
+import com.netflix.eureka.registry.ResponseCacheImpl;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -12,8 +14,15 @@ import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+
 @Configuration
 public class WebClientConfig {
+
+    @Value("${service.coalfired.url:http://localhost:3000}")
+    private String coalFiredUrl;
+
+    @Value("${service.lowcarbpower.url:http://localhost:8081}")
+    private String lowCarbPowerUrl;
 
     @Bean
     public WebClient coalFiredWebClient() {
@@ -25,7 +34,7 @@ public class WebClientConfig {
                                 .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
-                .baseUrl("http://localhost:3000/platform/productCatalogManagement/v4")
+                .baseUrl(coalFiredUrl + "/platform/productCatalogManagement/v4")
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
@@ -40,7 +49,7 @@ public class WebClientConfig {
                                 .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl(lowCarbPowerUrl)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }

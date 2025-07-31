@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:80")
+@CrossOrigin(origins = "http://localhost:3001")
 public class ConsumptionController {
     private final ConsumptionService consumptionService;
 
