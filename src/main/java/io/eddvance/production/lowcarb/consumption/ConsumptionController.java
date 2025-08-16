@@ -1,26 +1,33 @@
 package io.eddvance.production.lowcarb.consumption;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3001")
 public class ConsumptionController {
+
     private final ConsumptionService consumptionService;
+    private final Counter requestCounter;
 
-    public ConsumptionController(ConsumptionService consumptionService) {
+    public ConsumptionController(ConsumptionService consumptionService, MeterRegistry meterRegistry) {
         this.consumptionService = consumptionService;
+        // Créer le counter directement ici
+        this.requestCounter = Counter.builder("lowcarb.requests.total")
+                .description("Total number of requests to /low-carb endpoint")
+                .register(meterRegistry);
     }
 
-    @GetMapping("/low-carb")
-    public Mono<ConsumptionResponse> getConsumptionEstimate(
-            @RequestParam("email") String email,
-            @RequestParam("ratingRequest") Double ratingRequest) {
-
-        return consumptionService.calculateConsumption(email, ratingRequest);
+    @PostMapping("/low-carb")
+    public Mono<ConsumptionResponse> postConsumptionEstimate(
+            @RequestBody ConsumptionRequest request) {
+        requestCounter.increment();
+        return consumptionService.calculateConsumption(
+                request.getEmail(),
+                request.getRatingRequest()
+        );
     }
-
 }

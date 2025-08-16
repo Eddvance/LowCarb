@@ -1,18 +1,27 @@
 package io.eddvance.production.lowcarb.consumption;
 
 import io.eddvance.production.lowcarb.pricing.service.RateService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
 
 @Service
 public class ConsumptionService {
 
     private final RateService rateService;
     private final ConsumptionHistoryRepository consumptionHistoryRepository;
+    private final Counter requestCounter;
 
-    public ConsumptionService(RateService rateService, ConsumptionHistoryRepository consumptionHistoryRepository) {
+    public ConsumptionService(RateService rateService, ConsumptionHistoryRepository consumptionHistoryRepository, MeterRegistry meterRegistry) {
         this.rateService = rateService;
         this.consumptionHistoryRepository = consumptionHistoryRepository;
+
+        this.requestCounter = Counter.builder("lowcarb.saving-history-db")
+                .description("Total number of requests to /low-carb saving history db")
+                .register(meterRegistry);
+
     }
 
     private static final double CARBON_PART = 0.19;
@@ -37,6 +46,7 @@ public class ConsumptionService {
                                 response.setConsummation(String.format("%.2f kWh (%.2f kWh carbone @ %.2f€/kWh, %.2f kWh vert @ %.2f€/kWh)",
                                         consumption, carbonConsumption, carbonRate, greenConsumption, greenRate));
                                 response.setRate(String.format("%.2f €", finalCost));
+                                requestCounter.increment();
                                 return response;
                             });
                 });
