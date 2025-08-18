@@ -18,8 +18,8 @@ public class ConsumptionService {
         this.rateService = rateService;
         this.consumptionHistoryRepository = consumptionHistoryRepository;
 
-        this.requestCounter = Counter.builder("lowcarb.saving-history-db")
-                .description("Total number of requests to /low-carb saving history db")
+        this.requestCounter = Counter.builder("lowcarb_savings_recorded_total")
+                .description("Total number of savings recorded in database")
                 .register(meterRegistry);
 
     }

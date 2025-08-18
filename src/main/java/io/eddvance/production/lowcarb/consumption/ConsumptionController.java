@@ -16,7 +16,7 @@ public class ConsumptionController {
     public ConsumptionController(ConsumptionService consumptionService, MeterRegistry meterRegistry) {
         this.consumptionService = consumptionService;
         // Créer le counter directement ici
-        this.requestCounter = Counter.builder("lowcarb.requests.total")
+        this.requestCounter = Counter.builder("lowcarb_requests_total")
                 .description("Total number of requests to /low-carb endpoint")
                 .register(meterRegistry);
     }

@@ -1,11 +1,12 @@
 package io.eddvance.production.lowcarb.ratecollector.service;
 
 
-import io.eddvance.production.lowcarb.ratecollector.repository.RateHistoryRepository;
 import io.eddvance.production.lowcarb.ratecollector.model.RateRecord;
+import io.eddvance.production.lowcarb.ratecollector.repository.RateHistoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
@@ -13,12 +14,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
-public class
-RateHistoryService {
+public class RateHistoryService {
 
     private final RateHistoryRepository rateHistoryRepository;
     private final WebClient lowCarbPowerWebClient;
     private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RateHistoryService.class);
+
     public RateHistoryService(RateHistoryRepository rateHistoryRepository, WebClient lowCarbPowerWebClient) {
         this.rateHistoryRepository = rateHistoryRepository;
         this.lowCarbPowerWebClient = lowCarbPowerWebClient;
@@ -47,5 +48,40 @@ RateHistoryService {
 
     public Mono<RateRecord> getLatestRate() {
         return rateHistoryRepository.findTopByOrderByRateTimeDesc();
+
+    }
+
+    public Mono<Double> getAverageRateSince(LocalDateTime since) {
+        return rateHistoryRepository.findByRateTimeAfterOrderByRateTimeAsc(since)
+                .map(RateRecord::getRate)
+                .reduce(new double[]{0.0, 0.0}, (acc, rate) -> {
+                    acc[0] += rate;  // somme
+                    acc[1] += 1;     // count
+                    return acc;
+                })
+                .map(acc -> acc[1] > 0 ? acc[0] / acc[1] : 0.0)
+                .doOnNext(avg -> log.info("📊 Moyenne depuis {} : {} €/kWh", since, avg));
+    }
+
+    /**
+     * Calcule la moyenne de la dernière heure
+     */
+    public Mono<Double> getLastHourAverage() {
+        return getAverageRateSince(LocalDateTime.now().minusHours(1));
+    }
+
+    /**
+     * Calcule la moyenne des dernières 24 heures
+     */
+    public Mono<Double> getLastDayAverage() {
+        return getAverageRateSince(LocalDateTime.now().minusDays(1));
+    }
+
+    /**
+     * Récupère l'historique des tarifs entre deux dates
+     */
+    public Flux<RateRecord> getRateHistory(LocalDateTime from, LocalDateTime to) {
+        return rateHistoryRepository.findByRateTimeAfterOrderByRateTimeAsc(from)
+                .filter(rate -> rate.getRateTime().isBefore(to));
     }
 }
