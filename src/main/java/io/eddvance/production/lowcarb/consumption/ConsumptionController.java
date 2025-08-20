@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3002, *"})
 public class ConsumptionController {
 
     private final ConsumptionService consumptionService;
@@ -20,6 +20,7 @@ public class ConsumptionController {
                 .description("Total number of requests to /low-carb endpoint")
                 .register(meterRegistry);
     }
+
 
     @PostMapping("/low-carb")
     public Mono<ConsumptionResponse> postConsumptionEstimate(
