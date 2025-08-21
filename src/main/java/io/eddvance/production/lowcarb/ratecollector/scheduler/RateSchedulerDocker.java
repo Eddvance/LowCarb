@@ -10,35 +10,33 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-
 @Component
-@Profile("dev")
-public class RateSchedulerDev {
-
-    private static final Logger log = LoggerFactory.getLogger(RateSchedulerDev.class);
+@Profile("docker")
+public class RateSchedulerDocker {
+    private static final Logger log = LoggerFactory.getLogger(RateSchedulerDocker.class);
     private final RateHistoryService rateHistoryService;
     private final RateMetricsExporter metricsExporter;
 
-    public RateSchedulerDev(RateHistoryService rateHistoryService,
-                            RateMetricsExporter metricsExporter) {
+    public RateSchedulerDocker(RateHistoryService rateHistoryService,
+                               RateMetricsExporter metricsExporter) {
         this.rateHistoryService = rateHistoryService;
         this.metricsExporter = metricsExporter;
     }
 
-    @Scheduled(fixedRate = 60000)
-    public void collectHourlyRate() {
-        log.info("🔄 Scheduler DEV déclenché à {}", LocalDateTime.now());
+    @Scheduled(fixedRate = 30000)
+    public void collectRate() {
+        log.info("🐳 Scheduler DOCKER déclenché à {}", LocalDateTime.now());
 
         try {
             rateHistoryService.saveCurrentRate()
                     .doOnNext(rate -> {
-                        log.info("✅ Tarif: {}", rate.getRate());
+                        log.info("✅ Tarif sauvegardé: {}", rate.getRate());
                         metricsExporter.updateMetrics();
                     })
-                    .doOnError(error -> log.error("❌ Erreur: ", error))
+                    .doOnError(error -> log.error("❌ Erreur lors de la collecte: ", error))
                     .block();
         } catch (Exception e) {
-            log.error("💥 Exception dans le scheduler: ", e);
+            log.error("💥 Exception dans le scheduler Docker: ", e);
         }
     }
 }

@@ -55,31 +55,22 @@ public class RateHistoryService {
         return rateHistoryRepository.findByRateTimeAfterOrderByRateTimeAsc(since)
                 .map(RateRecord::getRate)
                 .reduce(new double[]{0.0, 0.0}, (acc, rate) -> {
-                    acc[0] += rate;  // somme
-                    acc[1] += 1;     // count
+                    acc[0] += rate;
+                    acc[1] += 1;
                     return acc;
                 })
                 .map(acc -> acc[1] > 0 ? acc[0] / acc[1] : 0.0)
                 .doOnNext(avg -> log.info("📊 Moyenne depuis {} : {} €/kWh", since, avg));
     }
 
-    /**
-     * Calcule la moyenne de la dernière heure
-     */
     public Mono<Double> getLastHourAverage() {
         return getAverageRateSince(LocalDateTime.now().minusHours(1));
     }
 
-    /**
-     * Calcule la moyenne des dernières 24 heures
-     */
     public Mono<Double> getLastDayAverage() {
         return getAverageRateSince(LocalDateTime.now().minusDays(1));
     }
 
-    /**
-     * Récupère l'historique des tarifs entre deux dates
-     */
     public Flux<RateRecord> getRateHistory(LocalDateTime from, LocalDateTime to) {
         return rateHistoryRepository.findByRateTimeAfterOrderByRateTimeAsc(from)
                 .filter(rate -> rate.getRateTime().isBefore(to));
